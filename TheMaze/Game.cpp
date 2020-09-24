@@ -1,10 +1,12 @@
 #include "Game.h"
+#include "UserPlayer.h"
+#include "CpuPlayer.h"
 #include "RandomMazeCreator.h"
 
-Game::Game(int numberOfPlayers, Player** players, int rounds)
+Game::Game(int numberOfPlayers, bool isUserPlaying, int rounds)
 {
 	this->_numberOfPlayers = numberOfPlayers;
-	this->_players = players;
+	this->_players = this->createPlayers(numberOfPlayers, isUserPlaying);
 	this->_rounds = rounds;
 }
 
@@ -26,6 +28,23 @@ void Game::play()
 			}
 		}
 	}
+}
+
+Player** Game::createPlayers(int numberOfPlayers, bool isUserPlaying) {
+	Player** players = new Player * [numberOfPlayers];
+
+	for (int i = 0; i < numberOfPlayers - 1; i++) {
+		players[i] = new CpuPlayer();
+	}
+
+	if (isUserPlaying) {
+		players[numberOfPlayers - 2] = new UserPlayer();
+	}
+	else {
+		players[numberOfPlayers - 2] = new CpuPlayer();
+	}
+
+	return players;
 }
 
 Maze Game::createMaze()
