@@ -33,6 +33,7 @@ Room** Maze::getConnectedExternalRooms(Room* room)
 
 void Maze::setRoom(int row, int col, Room* room)
 {
+	// TODO: Check the room is valid (4 directions)
 	this->_rooms[row][col] = room;
 }
 

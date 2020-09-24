@@ -147,6 +147,7 @@
     <ClInclude Include="NoStepMove.h" />
     <ClInclude Include="PeekHelpMove.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="RandomMazeCreator.h" />
     <ClInclude Include="Room.h" />
     <ClInclude Include="StepMove.h" />
     <ClInclude Include="Treasure.h" />
@@ -161,6 +162,7 @@
     <ClCompile Include="NoStepMove.cpp" />
     <ClCompile Include="PeekHelpMove.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="RandomMazeCreator.cpp" />
     <ClCompile Include="Room.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="StepMove.cpp" />

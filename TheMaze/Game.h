@@ -8,7 +8,6 @@ private:
 	int _numberOfPlayers;
 	Player** _players;
 	Maze createMaze();
-	Maze getRandomMaze();
 	void resetPlayersMoves();
 	void placePlayers(Maze& maze);
 
