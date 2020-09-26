@@ -13,6 +13,6 @@ private:
 public:
 	Maze(int rows, int cols);
 	void setRoom(int row, int col, Room* room);
-	
+	void print();
 	~Maze();
 };

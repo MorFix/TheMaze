@@ -1,5 +1,8 @@
 #include <stdio.h>
+#include <iostream>
 #include "Maze.h"
+
+using namespace std;
 
 Maze::Maze(int rows, int cols)
 {
@@ -35,6 +38,18 @@ void Maze::setRoom(int row, int col, Room* room)
 {
 	// TODO: Check the room is valid (4 directions)
 	this->_rooms[row][col] = room;
+}
+
+void Maze::print() {
+	for (int i = 0; i < this->_rows; i++) {
+		for (int j = 0; j < this->_cols; j++) {
+			if (this->_rooms[i][j] != NULL) {
+				// TODO: print the room borders
+			}
+
+			cout << "\t";
+		}
+	}
 }
 
 Maze::~Maze()
