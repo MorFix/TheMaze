@@ -142,6 +142,7 @@
     <ClInclude Include="CpuPlayer.h" />
     <ClInclude Include="DistanceHelpMove.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="Location.h" />
     <ClInclude Include="Maze.h" />
     <ClInclude Include="Move.h" />
     <ClInclude Include="NoStepMove.h" />
@@ -156,6 +157,7 @@
     <ClCompile Include="CpuPlayer.cpp" />
     <ClCompile Include="DistanceHelpMove.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Location.cpp" />
     <ClCompile Include="Maze.cpp" />
     <ClCompile Include="Move.cpp" />
     <ClCompile Include="NoStepMove.cpp" />

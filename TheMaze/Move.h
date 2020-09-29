@@ -2,6 +2,7 @@
 #include "Maze.h"
 
 class Player;
+class Maze;
 class Move
 {
 public:

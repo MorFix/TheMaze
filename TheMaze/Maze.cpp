@@ -61,6 +61,20 @@ void Maze::setRoom(int row, int col, Room* room)
 	(*this)[row][col] = room;
 }
 
+Location Maze::findPlayer(Player* player)
+{
+	for (int i = 0; i < this->_rows; i++) {
+		for (int j = 0; j < this->_cols; j++) {
+			Room* currentRoom = (*this)[i][j];
+			if (currentRoom != NULL && currentRoom->hasPlayer(player)) {
+				return Location(i, j);
+			}
+		}
+	}
+
+	return Location(-1, -1);
+}
+
 Maze::~Maze()
 {
 	for (int i = 0; i < this->_rows; i++) {

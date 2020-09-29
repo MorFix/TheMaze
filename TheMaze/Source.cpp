@@ -6,10 +6,12 @@
 using namespace std;
 
 int main() {
-	int numberOfPlayers, rounds, isUserPlaying = -1;
+	int numberOfPlayers = 0, rounds, isUserPlaying = -1;
 
-	cout << "How many players?" << endl;
-	cin >> numberOfPlayers;
+	while (numberOfPlayers <= 0) {
+		cout << "How many players?" << endl;
+		cin >> numberOfPlayers;
+	}
 	
 	while (isUserPlaying != 0 && isUserPlaying != 1) {
 		cout << "Is the user playing? 0 for no, 1 for yes" << endl;

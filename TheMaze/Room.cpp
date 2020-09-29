@@ -49,3 +49,20 @@ void Room::setTreasureValue(int value)
 {
 	this->_treasureValue = value;
 }
+
+bool Room::hasPlayer(Player* player)
+{
+	return std::find(this->_players.begin(), this->_players.end(), player) != this->_players.end();
+}
+
+void Room::addPlayer(Player* player)
+{
+	this->_players.push_back(player);
+}
+
+void Room::removePlayer(Player* player)
+{
+	std::vector<Player*>::iterator newEnd = std::remove(this->_players.begin(), this->_players.end(), player);
+
+	return;
+}

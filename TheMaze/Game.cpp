@@ -25,6 +25,11 @@ void Game::play()
 				delete move;
 
 				// TODO: break if the last move won the round (isRoundOver = true)
+				// TODO: Give points to the players
+				if (false) {
+					isRoundOver = true;
+					break;
+				}
 			}
 		}
 	}

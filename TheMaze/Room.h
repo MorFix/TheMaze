@@ -1,5 +1,9 @@
 #pragma once
+#include <algorithm>
+#include <vector>
+#include "Player.h"
 
+class Player;
 class Room
 {
 private:
@@ -8,6 +12,7 @@ private:
 	bool _isBottomOpen;
 	bool _isRightOpen;
 	int _treasureValue;
+	std::vector<Player*> _players;
 	
 	void setData(bool isTopOpen, bool isLeftOpen, bool isBottomOpen, bool isRightOpen, int treasureValue);
 public:
@@ -19,5 +24,9 @@ public:
 	bool isRightOpen() const;
 	int getTreasureValue() const;
 	void setTreasureValue(int value);
+	
+	bool hasPlayer(Player* player);
+	void addPlayer(Player* player);
+	void removePlayer(Player* player);
 };
 

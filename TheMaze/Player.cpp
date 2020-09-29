@@ -3,7 +3,6 @@
 
 Player::Player()
 {
-    this->setCurrentRoom(NULL);
     this->setScore(0);
     this->setNumberOfMoves(0);
 }
@@ -26,14 +25,4 @@ int Player::getNumberOfMoves() const
 void Player::setNumberOfMoves(int numberOfMoves)
 {
     this->_numberOfMoves = numberOfMoves;
-}
-
-Room* Player::getCurrentRoom() const
-{
-    return this->_currentRoom;
-}
-
-void Player::setCurrentRoom(Room* room)
-{
-    this->_currentRoom = room;
 }
