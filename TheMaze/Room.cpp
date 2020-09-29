@@ -1,35 +1,51 @@
 #include <stdio.h>
 #include "Room.h"
 
-Room::Room(bool isTopOpen, bool isLeftOpen, bool isBottomOpen, bool isRightOpen)
+Room::Room(bool isTopOpen, bool isLeftOpen, bool isBottomOpen, bool isRightOpen, int treasureValue)
+{
+	this->setData(isTopOpen, isLeftOpen, isBottomOpen, isRightOpen, treasureValue);
+}
+
+Room::Room(const Room& other) {
+	this->setData(other.isTopOpen(), other.isLeftOpen(), other.isBottomOpen(), other.isRightOpen(), other.getTreasureValue());
+}
+
+void Room::setData(bool isTopOpen, bool isLeftOpen, bool isBottomOpen, bool isRightOpen, int treasureValue)
 {
 	this->_isTopOpen = isTopOpen;
 	this->_isLeftOpen = isLeftOpen;
 	this->_isBottomOpen = isBottomOpen;
 	this->_isRightOpen = isRightOpen;
-	this->_treasure = NULL;
+
+	this->setTreasureValue(treasureValue);
 }
 
-Treasure* Room::getTreasure()
+bool Room::isTopOpen() const
 {
-	return this->_treasure;
+	return this->_isTopOpen;
 }
 
-void Room::clearTreasure() {
-	Treasure* treausre = this->getTreasure();
-
-	if (treausre != NULL) {
-		delete treausre;
-	}
-}
-
-void Room::setTreasure(int value)
+bool Room::isLeftOpen() const
 {
-	clearTreasure();
-	this->_treasure = new Treasure(value);
+	return this->_isLeftOpen;
 }
 
-Room::~Room()
+bool Room::isBottomOpen() const
 {
-	clearTreasure();
+	return this->_isBottomOpen;
+}
+
+bool Room::isRightOpen() const
+{
+	return this->_isRightOpen;
+}
+
+int Room::getTreasureValue() const
+{
+	return this->_treasureValue;
+}
+
+void Room::setTreasureValue(int value)
+{
+	this->_treasureValue = value;
 }

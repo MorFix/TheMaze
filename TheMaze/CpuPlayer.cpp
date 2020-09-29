@@ -13,14 +13,14 @@ Move* CpuPlayer::askForMove() {
 
 	switch (randomMoveNum)
 	{
-		case 1:
+		case 0:
 			return new NoStepMove;
-		case 2:
+		case 1:
 			return new DistanceHelpMove;
-		case 3:
+		case 2:
 			// TODO: Choose a random room to peek
 			return new PeekHelpMove;
-		case 4:
+		case 3:
 			// TODO: Choose a random room to step to
 			return new StepMove;
 		default:

@@ -6,20 +6,20 @@
 using namespace std;
 
 int main() {
-	int numberOfPlayers, rounds;
-	bool isUserPlaying;
+	int numberOfPlayers, rounds, isUserPlaying = -1;
 
 	cout << "How many players?" << endl;
 	cin >> numberOfPlayers;
 	
-	// TODO: input checks for this
-	cout << "Is the user playing? 0 for no, 1 for yes" << endl;
-	cin >> isUserPlaying;
+	while (isUserPlaying != 0 && isUserPlaying != 1) {
+		cout << "Is the user playing? 0 for no, 1 for yes" << endl;
+		cin >> isUserPlaying;
+	}
 
 	cout << "How many rounds?" << endl;
 	cin >> rounds;
 
-	Game game(numberOfPlayers, isUserPlaying, rounds);
+	Game game(numberOfPlayers, (bool) isUserPlaying, rounds);
 	
 	game.play();
 

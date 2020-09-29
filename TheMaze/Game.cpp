@@ -19,7 +19,7 @@ void Game::play()
 		while (!isRoundOver) {
 			// TODO: should this loop be here? or in the maze?
 			for (int j = 0; j < this->_numberOfPlayers; j++) {
-				Player* currentPlayer = this->_players[i];
+				Player* currentPlayer = this->_players[j];
 				Move* move = currentPlayer->askForMove();
 				move->perform(currentPlayer, maze);
 				delete move;
@@ -38,10 +38,10 @@ Player** Game::createPlayers(int numberOfPlayers, bool isUserPlaying) {
 	}
 
 	if (isUserPlaying) {
-		players[numberOfPlayers - 2] = new UserPlayer();
+		players[numberOfPlayers - 1] = new UserPlayer();
 	}
 	else {
-		players[numberOfPlayers - 2] = new CpuPlayer();
+		players[numberOfPlayers - 1] = new CpuPlayer();
 	}
 
 	return players;
