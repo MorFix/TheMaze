@@ -1,3 +1,5 @@
 #include "NoStepMove.h"
 
-void NoStepMove::perform(Player* player, Maze& maze) { }
+Location NoStepMove::perform(Player* player, Location& playerLocation, Maze& maze) {
+	return playerLocation;
+}

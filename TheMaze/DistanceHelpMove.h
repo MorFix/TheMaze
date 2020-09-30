@@ -4,6 +4,6 @@
 class DistanceHelpMove : public Move
 {
 public:
-    void perform(Player* player, Maze& maze);
+    Location perform(Player* player, Location& playerLocation, Maze& maze);
 };
 

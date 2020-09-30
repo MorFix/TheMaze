@@ -3,7 +3,10 @@
 
 class PeekHelpMove : public Move
 {
+private:
+	MoveSide _side;
 public:
-	void perform(Player* player, Maze& maze);
+	PeekHelpMove(MoveSide side);
+	Location perform(Player* player, Location& playerLocation, Maze& maze);
 };
 

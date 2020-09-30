@@ -4,9 +4,24 @@
 #include "PeekHelpMove.h"
 #include "DistanceHelpMove.h"
 #include "StepMove.h"
+
 using namespace std;
 
+MoveSide UserPlayer::getMoveSide()
+{
+	int moveSide = 0;
 
+	while (moveSide < 1 || moveSide > 4) {
+		cout << "Please pick a side:" << endl;
+		cout << "1 - Up" << endl;
+		cout << "2 - Left" << endl;
+		cout << "3 - Bottom" << endl;
+		cout << "4 - Right" << endl;
+		cin >> moveSide;
+	}
+
+	return (MoveSide) (moveSide - 1);
+}
 
 Move* UserPlayer::askForMove() {
 	int moveInput = 0;
@@ -22,17 +37,28 @@ Move* UserPlayer::askForMove() {
 
 	switch (moveInput)
 	{
-	case 1:
-		return new NoStepMove;
-	case 2:
-		return new DistanceHelpMove;
-	case 3:
-		// TODO: Choose a random room to peek
-		return new PeekHelpMove;
-	case 4:
-		// TODO: Choose a random room to step to
-		return new StepMove;
-	default:
-		return NULL;
+		case 1: {
+			cout << "You chose to do nothing! Moving on..." << endl;
+
+			return new NoStepMove;
+		}
+		case 2:
+			return new DistanceHelpMove;
+		case 3: {
+			cout << "Peeking ..." << endl;
+			MoveSide side = this->getMoveSide();
+			cout << "You chose to PEEK " << side << endl;
+			
+			return new PeekHelpMove(side);
+		}
+		case 4: {
+			cout << "Stepping ..." << endl;
+			MoveSide side = this->getMoveSide();
+			cout << "You chose to STEP " << side << endl;
+
+			return new StepMove(side);
+		}
+		default:
+			return NULL;
 	}
 }

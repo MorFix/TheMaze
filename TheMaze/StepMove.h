@@ -4,7 +4,10 @@
 
 class StepMove : public Move
 {
+private:
+	MoveSide _side;
 public:
-	void perform(Player* player, Maze& maze);
+	StepMove(MoveSide side);
+	Location perform(Player* player, Location& playerLocation, Maze& maze);
 };
 

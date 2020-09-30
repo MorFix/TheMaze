@@ -2,6 +2,7 @@
 #include <iostream>
 #include "Room.h"
 #include "Location.h"
+#include "MoveSide.h"
 
 class Room;
 class Player;
@@ -22,5 +23,6 @@ public:
 	Room**& operator[](int row) const;
 	void setRoom(int row, int col, Room* room);
 	Location findPlayer(Player* player);
+	Location getMoveInDirection(Location& sourceLocation, MoveSide direction);
 	~Maze();
 };

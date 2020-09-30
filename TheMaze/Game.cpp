@@ -1,3 +1,4 @@
+#include <iostream>
 #include "Game.h"
 #include "UserPlayer.h"
 #include "CpuPlayer.h"
@@ -17,21 +18,24 @@ void Game::play()
 		bool isRoundOver = false;
 		
 		while (!isRoundOver) {
-			// TODO: should this loop be here? or in the maze?
-			for (int j = 0; j < this->_numberOfPlayers; j++) {
+			for (int j = 0; !isRoundOver && j < this->_numberOfPlayers; j++) {
 				Player* currentPlayer = this->_players[j];
-				Move* move = currentPlayer->askForMove();
-				move->perform(currentPlayer, maze);
-				delete move;
+				Location playerLocation = maze.findPlayer(currentPlayer);
 
-				// TODO: break if the last move won the round (isRoundOver = true)
-				// TODO: Give points to the players
-				if (false) {
-					isRoundOver = true;
-					break;
+				// Is the player still in the game?
+				if (playerLocation != Location::NoLocation) {
+					std::cout << "Player " << j << " is playing..." << std::endl;
+					isRoundOver = playMove(currentPlayer, playerLocation, maze);
 				}
+				else {
+					std::cout << "Player " << j << " is out of the game" << std::endl;
+				}
+
+				std::cout << std::endl;
 			}
 		}
+
+		this->updatePlayersScore();
 	}
 }
 
@@ -56,10 +60,16 @@ Maze Game::createMaze()
 {
 	Maze maze = RandomMazeCreator::create();
 
-	// TODO: place the treasues and make sure the players can get them
-	this->placePlayers(maze);
+	// TODO: place the treasues
+	this->resetPlayers(maze);
 
 	return maze;
+}
+
+void Game::resetPlayers(Maze& maze)
+{
+	this->resetPlayersMoves();
+	// TODO: implement
 }
 
 void Game::resetPlayersMoves()
@@ -69,10 +79,35 @@ void Game::resetPlayersMoves()
 	}
 }
 
-void Game::placePlayers(Maze& maze)
+bool Game::playMove(Player* player, Location& playerLocation, Maze& maze)
 {
-	this->resetPlayersMoves();
-	// TODO: implement
+	Move* move = player->askForMove();
+	Location newLocation = move->perform(player, playerLocation, maze);
+	delete move;
+
+	// Is the new location inside the game?
+	if (newLocation == Location::NoLocation) {
+		return false;
+	}
+
+	int treasure = maze[newLocation.getRow()][newLocation.getCol()]->getTreasureValue();
+	if (treasure == 0) {
+		return false;
+	}
+
+	player->setScore(player->getScore() + treasure);
+	
+
+	return true;
+}
+
+void Game::updatePlayersScore()
+{
+	for (int i = 0; i < this->_numberOfPlayers; i++) {
+		Player* currentPlayer = this->_players[i];
+
+		currentPlayer->setScore(currentPlayer->getScore() - currentPlayer->getNumberOfMoves());
+	}
 }
 
 Game::~Game()

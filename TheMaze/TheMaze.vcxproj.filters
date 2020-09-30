@@ -66,6 +66,9 @@
     <ClInclude Include="Location.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MoveSide.h">
+      <Filter>Header Files\Moves</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Room.cpp">
@@ -109,6 +112,9 @@
     </ClCompile>
     <ClCompile Include="Location.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MoveSide.cpp">
+      <Filter>Source Files\Moves</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

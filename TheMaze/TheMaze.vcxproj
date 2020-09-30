@@ -145,6 +145,7 @@
     <ClInclude Include="Location.h" />
     <ClInclude Include="Maze.h" />
     <ClInclude Include="Move.h" />
+    <ClInclude Include="MoveSide.h" />
     <ClInclude Include="NoStepMove.h" />
     <ClInclude Include="PeekHelpMove.h" />
     <ClInclude Include="Player.h" />
@@ -160,6 +161,7 @@
     <ClCompile Include="Location.cpp" />
     <ClCompile Include="Maze.cpp" />
     <ClCompile Include="Move.cpp" />
+    <ClCompile Include="MoveSide.cpp" />
     <ClCompile Include="NoStepMove.cpp" />
     <ClCompile Include="PeekHelpMove.cpp" />
     <ClCompile Include="Player.cpp" />

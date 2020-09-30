@@ -25,5 +25,8 @@ int main() {
 	
 	game.play();
 
+	cout << "Game is OVER!" << endl << "Score:" << endl;
+	// TODO: print score
+
 	return 0;
 }

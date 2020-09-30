@@ -57,7 +57,6 @@ Room** Maze::getConnectedExternalRooms(Room* room)
 
 void Maze::setRoom(int row, int col, Room* room)
 {
-	// TODO: Check the room is valid (4 directions)
 	(*this)[row][col] = room;
 }
 
@@ -72,7 +71,51 @@ Location Maze::findPlayer(Player* player)
 		}
 	}
 
-	return Location(-1, -1);
+	return Location::NoLocation;
+}
+
+Location Maze::getMoveInDirection(Location& sourceLocation, MoveSide direction)
+{
+	int row = sourceLocation.getRow();
+	int col = sourceLocation.getCol();
+	Room* currentRoom = (*this)[row][col];
+	bool isSideOpen = false;
+
+	switch (direction)
+	{
+		case MoveSide::Up: {
+			row--;
+			isSideOpen = currentRoom->isTopOpen();
+			break;
+		}
+		case MoveSide::Left: {
+			col--;
+			isSideOpen = currentRoom->isLeftOpen();
+			break;
+		}
+		case MoveSide::Down: {
+			row++;
+			isSideOpen = currentRoom->isBottomOpen();
+			break;
+		}
+		case MoveSide::Right: {
+			col++;
+			isSideOpen = currentRoom->isRightOpen();
+			break;
+		}
+		default:
+			break;	
+	}
+	
+	if (row < 0 || col < 0 || row >= this->_rows || col >= this->_cols || (*this)[row][col] == NULL) {
+		return Location::NoLocation;
+	}
+
+	if (!isSideOpen) {
+		return sourceLocation;
+	}
+
+	return Location(row, col);
 }
 
 Maze::~Maze()

@@ -1,8 +1,27 @@
+#include <iostream>
 #include "StepMove.h"
 
-void StepMove::perform(Player* player, Maze& maze)
+StepMove::StepMove(MoveSide side)
 {
-	// TODO: ask the user for a location
-	// TODO: move the player to the selected location
-	this->increasePlayerMoves(player);
+	this->_side = side;
+}
+
+Location StepMove::perform(Player* player, Location& playerLocation, Maze& maze)
+{
+	Location newLocation = maze.getMoveInDirection(playerLocation, this->_side);
+	maze[playerLocation.getRow()][playerLocation.getCol()]->removePlayer(player);
+	
+	// Player didn't run out of The Maze
+	if (newLocation != Location::NoLocation) {
+		maze[newLocation.getRow()][newLocation.getCol()]->addPlayer(player);
+	}
+	
+	if (newLocation != playerLocation) {
+		this->increasePlayerMoves(player);
+	}
+	else {
+		std::cout << "This move is impossible. The turn is over" << std::endl;
+	}
+
+	return newLocation;
 }
