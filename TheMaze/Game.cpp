@@ -1,8 +1,11 @@
+#include <ctime>
 #include <iostream>
 #include "Game.h"
 #include "UserPlayer.h"
 #include "CpuPlayer.h"
 #include "RandomMazeCreator.h"
+
+#define MAX_TREASURE_VALUE 10
 
 Game::Game(int numberOfPlayers, bool isUserPlaying, int rounds)
 {
@@ -60,16 +63,49 @@ Maze Game::createMaze()
 {
 	Maze maze = RandomMazeCreator::create();
 
-	// TODO: place the treasues
-	this->resetPlayers(maze);
+	std::vector<Location> treasuresLocations = this->placeTreasures(maze);
+	this->resetPlayers(maze, treasuresLocations);
 
 	return maze;
 }
 
-void Game::resetPlayers(Maze& maze)
+std::vector<Location> Game::placeTreasures(Maze& maze)
 {
+	srand((unsigned int)time(NULL));
+	std::vector<Location> treasuresLocations;
+
+	std::vector<Location> externalRooms = maze.getExternalRooms();
+	size_t externalRoomsCount = externalRooms.size();
+	int treasuresCount = rand() % externalRoomsCount + 1;
+
+	for (int i = 0; i < treasuresCount; i++) {
+		Location externalRoom = externalRooms[i];
+		
+		treasuresLocations.push_back(externalRoom);
+
+		// Adding 1 to make sure the treasure is not 0
+		maze[externalRoom.getRow()][externalRoom.getCol()]->setTreasureValue(rand() % MAX_TREASURE_VALUE + 1);
+	}
+
+	return treasuresLocations;
+}
+
+void Game::resetPlayers(Maze& maze, std::vector<Location> treasuresLocations)
+{
+	srand((unsigned int)time(NULL));
+
 	this->resetPlayersMoves();
-	// TODO: implement
+
+	size_t treasuresLocationsCount = treasuresLocations.size();
+	for (int i = 0; i < this->_numberOfPlayers; i++) {
+		Location randomTreasureLocation = treasuresLocations[rand() % treasuresLocationsCount];
+
+		std::vector<Location> connectedRooms = maze.getConnectedExternalRooms(randomTreasureLocation);
+		size_t connectedRoomsCount = connectedRooms.size();
+
+		Location randomRoom = connectedRooms[rand() % connectedRoomsCount];
+		maze[randomRoom.getRow()][randomRoom.getCol()]->addPlayer(this->_players[i]);
+	}
 }
 
 void Game::resetPlayersMoves()

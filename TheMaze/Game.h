@@ -12,7 +12,8 @@ private:
 	Maze createMaze();
 	void resetPlayersMoves();
 	bool playMove(Player* player, Location& playerLocation, Maze& maze);
-	void resetPlayers(Maze& maze);
+	std::vector<Location> placeTreasures(Maze& maze);
+	void resetPlayers(Maze& maze, std::vector<Location> treasuresLocations);
 	void updatePlayersScore();
 public:
 	Game(int numberOfPlayers, bool isUserPlaying, int rounds);

@@ -40,19 +40,21 @@ void Maze::setData(int rows, int cols) {
 	}
 }
 
-bool Maze::isExternal(Room* room)
+bool Maze::isExternal(Location& location)
 {
 	return false;
 }
 
-Room** Maze::getExternalRooms()
+std::vector<Location> Maze::getExternalRooms()
 {
-	return NULL;
+	// TODO: implement
+	return vector<Location>();
 }
 
-Room** Maze::getConnectedExternalRooms(Room* room)
+std::vector<Location> Maze::getConnectedExternalRooms(Location& location)
 {
-	return NULL;
+	// TODO: implement
+	return vector<Location>();
 }
 
 void Maze::setRoom(int row, int col, Room* room)

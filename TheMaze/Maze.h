@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <vector>
 #include "Room.h"
 #include "Location.h"
 #include "MoveSide.h"
@@ -13,12 +14,12 @@ private:
 	int _cols;
 
 	friend std::ostream& operator<<(std::ostream& out, const Maze& maze);
-	bool isExternal(Room* room);
-	Room** getExternalRooms();
-	Room** getConnectedExternalRooms(Room* room);
+	bool isExternal(Location& location);
 public:
 	Maze(int rows, int cols);
 	Maze(const Maze& other);
+	std::vector<Location> getExternalRooms();
+	std::vector<Location> getConnectedExternalRooms(Location& location);
 	void setData(int rows, int cols);
 	Room**& operator[](int row) const;
 	void setRoom(int row, int col, Room* room);
