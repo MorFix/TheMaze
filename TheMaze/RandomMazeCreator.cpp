@@ -1,10 +1,8 @@
-#include <ctime>
 #include <cstdlib>
 #include "RandomMazeCreator.h"
 
 Maze RandomMazeCreator::create()
 {
-	srand((unsigned int)time(NULL));
 	int randomMazeNum = rand() % 5;
 
 	switch (randomMazeNum)

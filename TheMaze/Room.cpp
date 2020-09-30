@@ -8,6 +8,7 @@ Room::Room(bool isTopOpen, bool isLeftOpen, bool isBottomOpen, bool isRightOpen,
 
 Room::Room(const Room& other) {
 	this->setData(other.isTopOpen(), other.isLeftOpen(), other.isBottomOpen(), other.isRightOpen(), other.getTreasureValue());
+	this->_players = other._players;
 }
 
 void Room::setData(bool isTopOpen, bool isLeftOpen, bool isBottomOpen, bool isRightOpen, int treasureValue)

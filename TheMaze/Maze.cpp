@@ -40,21 +40,104 @@ void Maze::setData(int rows, int cols) {
 	}
 }
 
-bool Maze::isExternal(Location& location)
+bool Maze::isExternal(int row, int col)
 {
-	return false;
+	Room* room = (*this)[row][col];
+
+	return room->isTopOpen() && !this->isLocationInMaze(row - 1, col) ||
+		room->isLeftOpen() && !this->isLocationInMaze(row, col - 1) ||
+		room->isBottomOpen() && !this->isLocationInMaze(row + 1, col) ||
+		room->isRightOpen() && !this->isLocationInMaze(row, col + 1);
+}
+
+bool Maze::isLocationInMaze(int row, int col) {
+	return row >= 0 && col >= 0 && row < this->_rows && col < this->_cols && (*this)[row][col] != NULL;
 }
 
 std::vector<Location> Maze::getExternalRooms()
 {
-	// TODO: implement
-	return vector<Location>();
+	vector<Location> rooms;
+
+	for (int i = 0; i < this->_rows; i++) {
+		for (int j = 0; j < this->_cols; j++) {
+			if ((*this)[i][j] != NULL && this->isExternal(i, j)) {
+				rooms.push_back(Location(i, j));
+			}
+		}
+	}
+
+	return rooms;
 }
 
-std::vector<Location> Maze::getConnectedExternalRooms(Location& location)
+std::vector<Location> Maze::getConnectedExternalRooms(int row, int col) {
+	// This is to avoid searching again where we already visited
+	vector<Location> recursiveStack;
+
+	return this->getConnectedExternalRooms(row, col, recursiveStack);
+}
+
+vector<Location> Maze::getConnectedExternalRooms(int row, int col, vector<Location> recursiveStack)
 {
-	// TODO: implement
-	return vector<Location>();
+	vector<Location> rooms;
+	Room* room = (*this)[row][col];
+	Location location = Location(row, col);
+
+	for (int i = 0; i < recursiveStack.size(); i++) {
+		if (recursiveStack[i] == location) {
+			return rooms;
+		}
+	}
+
+	recursiveStack.push_back(location);
+
+	if (this->isExternal(row, col)) {
+		rooms.push_back(location);
+	}
+
+	if (room->isTopOpen() && this->isLocationInMaze(row - 1, col)) {
+		vector<Location> connectedFromTop = getConnectedExternalRooms(row - 1, col, recursiveStack);
+
+		rooms.insert(rooms.end(), connectedFromTop.begin(), connectedFromTop.end());
+	}
+
+	if (room->isLeftOpen() && this->isLocationInMaze(row, col - 1)) {
+		vector<Location> connectedFromLeft = getConnectedExternalRooms(row, col - 1, recursiveStack);
+
+		rooms.insert(rooms.end(), connectedFromLeft.begin(), connectedFromLeft.end());
+	}
+
+	if (room->isBottomOpen() && this->isLocationInMaze(row + 1, col)) {
+		vector<Location> connectedFromBottom = getConnectedExternalRooms(row + 1, col, recursiveStack);
+
+		rooms.insert(rooms.end(), connectedFromBottom.begin(), connectedFromBottom.end());
+	}
+
+	if (room->isRightOpen() && this->isLocationInMaze(row, col + 1)) {
+		vector<Location> connectedFromRight = getConnectedExternalRooms(row, col + 1, recursiveStack);
+
+		rooms.insert(rooms.end(), connectedFromRight.begin(), connectedFromRight.end());
+	}
+
+	vector<Location>::iterator newEnd = std::remove(recursiveStack.begin(), recursiveStack.end(), location);
+
+	return rooms;
+}
+
+vector<Location> Maze::getTreasures()
+{
+	vector<Location> locations;
+
+	for (int i = 0; i < this->_rows; i++) {
+		for (int j = 0; j < this->_cols; j++) {
+			Room* room = (*this)[i][j];
+
+			if (room != NULL && room->getTreasureValue() > 0) {
+				locations.push_back(Location(i, j));
+			}
+		}
+	}
+
+	return locations;
 }
 
 void Maze::setRoom(int row, int col, Room* room)
@@ -137,6 +220,11 @@ Maze::~Maze()
 
 Room**& Maze::operator[](int row) const {
 	return this->_rooms[row];
+}
+
+Room*& Maze::operator[](const Location& location) const
+{
+	return (*this)[location.getRow()][location.getCol()];
 }
 
 ostream& operator<<(ostream& out, const Maze& maze)

@@ -1,3 +1,4 @@
+#include <ctime>
 #include <iostream>
 #include "Game.h"
 #include "CpuPlayer.h"
@@ -6,6 +7,8 @@
 using namespace std;
 
 int main() {
+	srand((unsigned int)time(NULL));
+
 	int numberOfPlayers = 0, rounds, isUserPlaying = -1;
 
 	while (numberOfPlayers <= 0) {

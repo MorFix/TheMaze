@@ -1,4 +1,3 @@
-#include <ctime>
 #include <iostream>
 #include "Game.h"
 #include "UserPlayer.h"
@@ -27,17 +26,18 @@ void Game::play()
 
 				// Is the player still in the game?
 				if (playerLocation != Location::NoLocation) {
-					std::cout << "Player " << j << " is playing..." << std::endl;
+					std::cout << "Player " << j + 1 << " is playing..." << std::endl;
 					isRoundOver = playMove(currentPlayer, playerLocation, maze);
 				}
 				else {
-					std::cout << "Player " << j << " is out of the game" << std::endl;
+					std::cout << "Player " << j + 1 << " is out of the game" << std::endl;
 				}
 
 				std::cout << std::endl;
 			}
 		}
 
+		std::cout << "Round " << i + 1 << " is over!" << std::endl;
 		this->updatePlayersScore();
 	}
 }
@@ -71,7 +71,6 @@ Maze Game::createMaze()
 
 std::vector<Location> Game::placeTreasures(Maze& maze)
 {
-	srand((unsigned int)time(NULL));
 	std::vector<Location> treasuresLocations;
 
 	std::vector<Location> externalRooms = maze.getExternalRooms();
@@ -84,7 +83,7 @@ std::vector<Location> Game::placeTreasures(Maze& maze)
 		treasuresLocations.push_back(externalRoom);
 
 		// Adding 1 to make sure the treasure is not 0
-		maze[externalRoom.getRow()][externalRoom.getCol()]->setTreasureValue(rand() % MAX_TREASURE_VALUE + 1);
+		maze[externalRoom]->setTreasureValue(rand() % MAX_TREASURE_VALUE + 1);
 	}
 
 	return treasuresLocations;
@@ -92,19 +91,17 @@ std::vector<Location> Game::placeTreasures(Maze& maze)
 
 void Game::resetPlayers(Maze& maze, std::vector<Location> treasuresLocations)
 {
-	srand((unsigned int)time(NULL));
-
 	this->resetPlayersMoves();
 
 	size_t treasuresLocationsCount = treasuresLocations.size();
 	for (int i = 0; i < this->_numberOfPlayers; i++) {
 		Location randomTreasureLocation = treasuresLocations[rand() % treasuresLocationsCount];
 
-		std::vector<Location> connectedRooms = maze.getConnectedExternalRooms(randomTreasureLocation);
+		std::vector<Location> connectedRooms = maze.getConnectedExternalRooms(randomTreasureLocation.getRow(), randomTreasureLocation.getCol());
 		size_t connectedRoomsCount = connectedRooms.size();
 
 		Location randomRoom = connectedRooms[rand() % connectedRoomsCount];
-		maze[randomRoom.getRow()][randomRoom.getCol()]->addPlayer(this->_players[i]);
+		maze[randomRoom]->addPlayer(this->_players[i]);
 	}
 }
 
@@ -126,14 +123,13 @@ bool Game::playMove(Player* player, Location& playerLocation, Maze& maze)
 		return false;
 	}
 
-	int treasure = maze[newLocation.getRow()][newLocation.getCol()]->getTreasureValue();
+	int treasure = maze[newLocation]->getTreasureValue();
 	if (treasure == 0) {
 		return false;
 	}
 
 	player->setScore(player->getScore() + treasure);
 	
-
 	return true;
 }
 

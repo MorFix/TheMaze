@@ -13,7 +13,7 @@ Location PeekHelpMove::perform(Player* player, Location& playerLocation, Maze& m
 		std::cout << "This room is outside the borders of the maze" << std::endl;
 	}
 	else {
-		Room* room = maze[peekLocation.getRow()][peekLocation.getCol()];
+		Room* room = maze[peekLocation];
 		std::cout << "There is a room to your " << this->_side << " and it's value is: " << room->getTreasureValue() << std::endl;
 	}
 	
