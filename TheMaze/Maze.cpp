@@ -232,11 +232,15 @@ ostream& operator<<(ostream& out, const Maze& maze)
 	for (int i = 0; i < maze._rows; i++) {
 		for (int j = 0; j < maze._cols; j++) {
 			if (maze[i][j] != NULL) {
-				// TODO: print the room borders
+				Room* room = maze[i][j];
+
+				out << *room;
 			}
 
 			out << "\t";
 		}
+
+		out << endl;
 	}
 
 	return out;

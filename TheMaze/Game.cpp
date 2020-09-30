@@ -17,6 +17,8 @@ void Game::play()
 {
 	for (int i = 0; i < this->_rounds; i++) {
 		Maze maze = this->createMaze();
+		std::cout << maze;
+
 		bool isRoundOver = false;
 		
 		while (!isRoundOver) {

@@ -28,5 +28,6 @@ public:
 	bool hasPlayer(Player* player);
 	void addPlayer(Player* player);
 	void removePlayer(Player* player);
+	friend std::ostream& operator<<(std::ostream& out, const Room& room);
 };
 
