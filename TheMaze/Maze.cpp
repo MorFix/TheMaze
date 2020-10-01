@@ -208,7 +208,7 @@ Location Maze::getMoveInDirection(Location& sourceLocation, MoveSide direction)
 			break;	
 	}
 	
-	if (row < 0 || col < 0 || row >= this->_rows || col >= this->_cols || (*this)[row][col] == NULL) {
+	if (!this->isLocationInMaze(row, col)) {
 		return Location::NoLocation;
 	}
 

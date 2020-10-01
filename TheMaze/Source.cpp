@@ -9,20 +9,26 @@ using namespace std;
 int main() {
 	srand((unsigned int)time(NULL));
 
-	int numberOfPlayers = 0, rounds, isUserPlaying = -1, isPrintingAfterMove = -1;
+	int numberOfCpuPlayers = -1, numberOfUsers = -1, rounds = 0, isPrintingAfterMove = -1;
 
-	while (numberOfPlayers <= 0) {
-		cout << "How many players?" << endl;
-		cin >> numberOfPlayers;
+	while (numberOfCpuPlayers < 0) {
+		cout << "How many CPU players?" << endl;
+		cin >> numberOfCpuPlayers;
 	}
 	
-	while (isUserPlaying != 0 && isUserPlaying != 1) {
-		cout << "Is the user playing? 0 for no, 1 for yes" << endl;
-		cin >> isUserPlaying;
+	while (numberOfUsers < 0) {
+		cout << "How many USER players?" << endl;
+		cin >> numberOfUsers;
 	}
 
-	cout << "How many rounds?" << endl;
-	cin >> rounds;
+	if (numberOfCpuPlayers + numberOfUsers == 0) {
+		return -1;
+	}
+
+	while (rounds <= 0) {
+		cout << "How many rounds?" << endl;
+		cin >> rounds;
+	}
 
 	while (isPrintingAfterMove != 0 && isPrintingAfterMove != 1) {
 		cout << "Print after each move? 0 for no, 1 for yes" << endl;
@@ -31,11 +37,10 @@ int main() {
 
 	cout << endl;
 
-	Game game(numberOfPlayers, (bool) isUserPlaying, rounds);
+	Game game(numberOfCpuPlayers, numberOfUsers, rounds);
 	game.play((bool) isPrintingAfterMove);
 
-	cout << "Game is OVER!" << endl << "Score:" << endl;
-	game.printScore();
+	cout << "Game is OVER!" << endl;
 
 	return 0;
 }

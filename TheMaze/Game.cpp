@@ -8,10 +8,10 @@
 
 using namespace std;
 
-Game::Game(int numberOfPlayers, bool isUserPlaying, int rounds)
+Game::Game(int numberOfCpuPlayers, int numberOfUsers, int rounds)
 {
-	this->_numberOfPlayers = numberOfPlayers;
-	this->_players = this->createPlayers(numberOfPlayers, isUserPlaying);
+	this->_numberOfPlayers = numberOfCpuPlayers + numberOfUsers;
+	this->_players = this->createPlayers(numberOfCpuPlayers, numberOfUsers);
 	this->_rounds = rounds;
 }
 
@@ -24,6 +24,16 @@ void Game::play(bool printingAfterMove)
 		this->resetPlayers(maze, treasuresLocations);
 		this->playRound(i + 1, maze, printingAfterMove);
 	}
+
+	Player* winner = this->_players[0];
+
+	for (int i = 0; i < this->_numberOfPlayers; i++) {
+		if (this->_players[i]->getScore() > winner->getScore()) {
+			winner = this->_players[i];
+		}
+	}
+
+	cout << "The winner is PLAYER " << winner->getNumber() << endl;
 }
 
 void Game::playRound(int number, Maze& maze, bool printingAfterMove) {
@@ -50,24 +60,25 @@ void Game::playRound(int number, Maze& maze, bool printingAfterMove) {
 		}
 	}
 
+	this->updatePlayersScore();
+	
 	cout << "Round " << number << " is over!" << endl << endl;
 	cout << maze << endl;
 
-	this->updatePlayersScore();
+	this->printScore();
+	cout << endl;
 }
 
-Player** Game::createPlayers(int numberOfPlayers, bool isUserPlaying) {
-	Player** players = new Player * [numberOfPlayers];
+Player** Game::createPlayers(int numberOfCpuPlayers, int numberOfUsers) {
+	Player** players = new Player * [this->_numberOfPlayers];
+	int i = 0;
 
-	for (int i = 0; i < numberOfPlayers - 1; i++) {
+	for (; i < numberOfCpuPlayers; i++) {
 		players[i] = new CpuPlayer(i + 1);
 	}
 
-	if (isUserPlaying) {
-		players[numberOfPlayers - 1] = new UserPlayer(numberOfPlayers);
-	}
-	else {
-		players[numberOfPlayers - 1] = new CpuPlayer(numberOfPlayers);
+	for (int j = 0; j < numberOfUsers; i++, j++) {
+		players[i] = new UserPlayer(i + 1);
 	}
 
 	return players;
@@ -95,7 +106,7 @@ vector<Location> Game::placeTreasures(Maze& maze)
 	return treasuresLocations;
 }
 
-void Game::resetPlayers(Maze& maze, vector<Location> treasuresLocations)
+void Game::resetPlayers(Maze& maze, vector<Location>& treasuresLocations)
 {
 	this->resetPlayersMoves();
 
@@ -165,7 +176,8 @@ void Game::updatePlayersScore()
 
 void Game::printScore()
 {
-	cout << "Player Number\tScore" << endl;
+	cout << "Score:" << endl << "Player Number\tScore" << endl;
+
 	for (int i = 0; i < this->_numberOfPlayers; i++) {
 		Player* player = this->_players[i];
 		cout << player->getNumber() << "\t\t" << player->getScore() << endl;
