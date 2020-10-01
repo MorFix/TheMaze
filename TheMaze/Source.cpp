@@ -23,6 +23,7 @@ int main() {
 
 	cout << "How many rounds?" << endl;
 	cin >> rounds;
+	cout << endl;
 
 	Game game(numberOfPlayers, (bool) isUserPlaying, rounds);
 	

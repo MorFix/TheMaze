@@ -69,11 +69,25 @@ std::vector<Location> Maze::getExternalRooms()
 	return rooms;
 }
 
-std::vector<Location> Maze::getConnectedExternalRooms(int row, int col) {
-	// This is to avoid searching again where we already visited
+std::vector<Location> Maze::getConnectedEmptyExternalRooms(Location& originalRoom) {
+	vector<Location> rooms;
+	
+	// This is to avoid searching again where we already visited (a loop)
 	vector<Location> recursiveStack;
+	
+	Room* room = (*this)[originalRoom];
+	int row = originalRoom.getRow();
+	int col = originalRoom.getCol();
+	
+	recursiveStack.push_back(originalRoom);
 
-	return this->getConnectedExternalRooms(row, col, recursiveStack);
+	// Proccesing 4 directions of the current room, skipping the current one since it's not considered connected to itself
+	addConnectedExternalRooms(row - 1, col, room->isTopOpen(), rooms, recursiveStack);
+	addConnectedExternalRooms(row, col - 1, room->isLeftOpen(), rooms, recursiveStack);
+	addConnectedExternalRooms(row + 1, col, room->isBottomOpen(), rooms, recursiveStack);
+	addConnectedExternalRooms(row, col + 1, room->isRightOpen(), rooms, recursiveStack);
+
+	return rooms;
 }
 
 vector<Location> Maze::getConnectedExternalRooms(int row, int col, vector<Location> recursiveStack)
@@ -82,6 +96,7 @@ vector<Location> Maze::getConnectedExternalRooms(int row, int col, vector<Locati
 	Room* room = (*this)[row][col];
 	Location location = Location(row, col);
 
+	// Checking if we originally came from the current location, which means there is a loop and we ignore it
 	for (int i = 0; i < recursiveStack.size(); i++) {
 		if (recursiveStack[i] == location) {
 			return rooms;
@@ -90,37 +105,31 @@ vector<Location> Maze::getConnectedExternalRooms(int row, int col, vector<Locati
 
 	recursiveStack.push_back(location);
 
-	if (this->isExternal(row, col)) {
+	// Processing the current room (this is the recursion stop condition)
+	if (this->isExternal(row, col) && room->getTreasureValue() == 0) {
 		rooms.push_back(location);
 	}
 
-	if (room->isTopOpen() && this->isLocationInMaze(row - 1, col)) {
-		vector<Location> connectedFromTop = getConnectedExternalRooms(row - 1, col, recursiveStack);
-
-		rooms.insert(rooms.end(), connectedFromTop.begin(), connectedFromTop.end());
-	}
-
-	if (room->isLeftOpen() && this->isLocationInMaze(row, col - 1)) {
-		vector<Location> connectedFromLeft = getConnectedExternalRooms(row, col - 1, recursiveStack);
-
-		rooms.insert(rooms.end(), connectedFromLeft.begin(), connectedFromLeft.end());
-	}
-
-	if (room->isBottomOpen() && this->isLocationInMaze(row + 1, col)) {
-		vector<Location> connectedFromBottom = getConnectedExternalRooms(row + 1, col, recursiveStack);
-
-		rooms.insert(rooms.end(), connectedFromBottom.begin(), connectedFromBottom.end());
-	}
-
-	if (room->isRightOpen() && this->isLocationInMaze(row, col + 1)) {
-		vector<Location> connectedFromRight = getConnectedExternalRooms(row, col + 1, recursiveStack);
-
-		rooms.insert(rooms.end(), connectedFromRight.begin(), connectedFromRight.end());
-	}
+	// Proccesing 4 directions of the current room
+	addConnectedExternalRooms(row - 1, col, room->isTopOpen(), rooms, recursiveStack);
+	addConnectedExternalRooms(row, col - 1, room->isLeftOpen(), rooms, recursiveStack);
+	addConnectedExternalRooms(row + 1, col, room->isBottomOpen(), rooms, recursiveStack);
+	addConnectedExternalRooms(row, col + 1, room->isRightOpen(), rooms, recursiveStack);
 
 	vector<Location>::iterator newEnd = std::remove(recursiveStack.begin(), recursiveStack.end(), location);
 
 	return rooms;
+}
+
+void Maze::addConnectedExternalRooms(int row, int col, bool isPathOpen, vector<Location> rooms, vector<Location> recursiveStack)
+{
+	if (!isPathOpen || !this->isLocationInMaze(row, col)) {
+		return;
+	}
+
+	vector<Location> connectedExternalRooms = getConnectedExternalRooms(row, col, recursiveStack);
+
+	rooms.insert(rooms.end(), connectedExternalRooms.begin(), connectedExternalRooms.end());
 }
 
 vector<Location> Maze::getTreasures()

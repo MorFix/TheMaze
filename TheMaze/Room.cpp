@@ -70,9 +70,19 @@ void Room::removePlayer(Player* player)
 
 std::ostream& operator<<(std::ostream& out, const Room& room)
 {
-	out << room.getTreasureValue() << " - ";
-	for (int i = 0; i < room._players.size(); i++) {
-		out << "* ";
+	out << room.getTreasureValue();
+
+	size_t numberOfPlayers = room._players.size();
+	if (numberOfPlayers > 0) {
+		out << " - ";
+	}
+
+	for (int i = 0; i < numberOfPlayers; i++) {
+		out << *room._players[i];
+
+		if (i < numberOfPlayers - 1) {
+			out << ".";
+		}
 	}
 
 	return out;

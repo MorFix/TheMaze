@@ -6,7 +6,7 @@ class CpuPlayer : public Player {
 protected:
 	MoveSide getMoveSide();
 public:
-	CpuPlayer() : Player() {}
+	CpuPlayer(int number) : Player(number) {}
 	Move* askForMove();
 };
 

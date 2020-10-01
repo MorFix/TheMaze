@@ -16,11 +16,14 @@ Game::Game(int numberOfPlayers, bool isUserPlaying, int rounds)
 void Game::play()
 {
 	for (int i = 0; i < this->_rounds; i++) {
-		Maze maze = this->createMaze();
-		std::cout << maze;
+		Maze maze = RandomMazeCreator::create();
+		std::vector<Location> treasuresLocations = this->placeTreasures(maze);
+		std::cout << maze << std::endl;
+		
+		this->resetPlayers(maze, treasuresLocations);
+		std::cout << maze << std::endl;
 
 		bool isRoundOver = false;
-		
 		while (!isRoundOver) {
 			for (int j = 0; !isRoundOver && j < this->_numberOfPlayers; j++) {
 				Player* currentPlayer = this->_players[j];
@@ -28,18 +31,19 @@ void Game::play()
 
 				// Is the player still in the game?
 				if (playerLocation != Location::NoLocation) {
-					std::cout << "Player " << j + 1 << " is playing..." << std::endl;
+					std::cout << "Player " << currentPlayer->getNumber() << " is playing..." << std::endl;
 					isRoundOver = playMove(currentPlayer, playerLocation, maze);
 				}
 				else {
-					std::cout << "Player " << j + 1 << " is out of the game" << std::endl;
+					std::cout << "Player " << currentPlayer->getNumber() << " is out of the game" << std::endl;
 				}
 
 				std::cout << std::endl;
 			}
 		}
 
-		std::cout << "Round " << i + 1 << " is over!" << std::endl;
+		std::cout << "Round " << i + 1 << " is over!" << std::endl << std::endl;
+
 		this->updatePlayersScore();
 	}
 }
@@ -48,44 +52,36 @@ Player** Game::createPlayers(int numberOfPlayers, bool isUserPlaying) {
 	Player** players = new Player * [numberOfPlayers];
 
 	for (int i = 0; i < numberOfPlayers - 1; i++) {
-		players[i] = new CpuPlayer();
+		players[i] = new CpuPlayer(i + 1);
 	}
 
 	if (isUserPlaying) {
-		players[numberOfPlayers - 1] = new UserPlayer();
+		players[numberOfPlayers - 1] = new UserPlayer(numberOfPlayers);
 	}
 	else {
-		players[numberOfPlayers - 1] = new CpuPlayer();
+		players[numberOfPlayers - 1] = new CpuPlayer(numberOfPlayers);
 	}
 
 	return players;
 }
 
-Maze Game::createMaze()
-{
-	Maze maze = RandomMazeCreator::create();
-
-	std::vector<Location> treasuresLocations = this->placeTreasures(maze);
-	this->resetPlayers(maze, treasuresLocations);
-
-	return maze;
-}
-
 std::vector<Location> Game::placeTreasures(Maze& maze)
 {
 	std::vector<Location> treasuresLocations;
-
 	std::vector<Location> externalRooms = maze.getExternalRooms();
-	size_t externalRoomsCount = externalRooms.size();
-	int treasuresCount = rand() % externalRoomsCount + 1;
 
-	for (int i = 0; i < treasuresCount; i++) {
-		Location externalRoom = externalRooms[i];
-		
-		treasuresLocations.push_back(externalRoom);
+	// Getting random number of treasures to place
+	int maxTreasureIndex = (rand() % (externalRooms.size() - this->_numberOfPlayers));
+
+	for (int i = 0; i <= maxTreasureIndex; i++) {
+		// Getting random room to place the treasure in
+		Location room = externalRooms[rand() % externalRooms.size()];
+
+		std::vector<Location>::iterator newEnd = std::remove(externalRooms.begin(), externalRooms.end(), room);
+		treasuresLocations.push_back(room);
 
 		// Adding 1 to make sure the treasure is not 0
-		maze[externalRoom]->setTreasureValue(rand() % MAX_TREASURE_VALUE + 1);
+		maze[room]->setTreasureValue(rand() % MAX_TREASURE_VALUE + 1);
 	}
 
 	return treasuresLocations;
@@ -95,14 +91,20 @@ void Game::resetPlayers(Maze& maze, std::vector<Location> treasuresLocations)
 {
 	this->resetPlayersMoves();
 
-	size_t treasuresLocationsCount = treasuresLocations.size();
+	size_t numberOfTreasures = treasuresLocations.size();
+
 	for (int i = 0; i < this->_numberOfPlayers; i++) {
-		Location randomTreasureLocation = treasuresLocations[rand() % treasuresLocationsCount];
+		// Picking a path to a random treasure
+		Location randTreasureLocation = treasuresLocations[rand() % numberOfTreasures];
+		std::vector<Location> connectedRooms = maze.getConnectedEmptyExternalRooms(randTreasureLocation);
+		
+		// Making sure we choose a treasure that has a connected empty room
+		while (connectedRooms.size() == 0) {
+			randTreasureLocation = treasuresLocations[rand() % numberOfTreasures];
+			connectedRooms = maze.getConnectedEmptyExternalRooms(randTreasureLocation);
+		}
 
-		std::vector<Location> connectedRooms = maze.getConnectedExternalRooms(randomTreasureLocation.getRow(), randomTreasureLocation.getCol());
-		size_t connectedRoomsCount = connectedRooms.size();
-
-		Location randomRoom = connectedRooms[rand() % connectedRoomsCount];
+		Location randomRoom = connectedRooms[rand() % connectedRooms.size()];
 		maze[randomRoom]->addPlayer(this->_players[i]);
 	}
 }

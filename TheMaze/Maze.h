@@ -17,12 +17,12 @@ private:
 	bool isExternal(int row, int col);
 	bool isLocationInMaze(int row, int col);
 	std::vector<Location> getConnectedExternalRooms(int row, int col, std::vector<Location> recursiveStack);
-
+	void addConnectedExternalRooms(int row, int col, bool isPathOpen, std::vector<Location> rooms, std::vector<Location> recursiveStack);
 public:
 	Maze(int rows, int cols);
 	Maze(const Maze& other);
 	std::vector<Location> getExternalRooms();
-	std::vector<Location> getConnectedExternalRooms(int row, int col);
+	std::vector<Location> getConnectedEmptyExternalRooms(Location& originalRoom);
 	std::vector<Location> getTreasures();
 	void setData(int rows, int cols);
 	Room**& operator[](int row) const;

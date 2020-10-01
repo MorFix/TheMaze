@@ -9,11 +9,11 @@ StepMove::StepMove(MoveSide side)
 Location StepMove::perform(Player* player, Location& playerLocation, Maze& maze)
 {
 	Location newLocation = maze.getMoveInDirection(playerLocation, this->_side);
-	maze[playerLocation.getRow()][playerLocation.getCol()]->removePlayer(player);
+	maze[playerLocation]->removePlayer(player);
 	
 	// Player didn't run out of The Maze
 	if (newLocation != Location::NoLocation) {
-		maze[newLocation.getRow()][newLocation.getCol()]->addPlayer(player);
+		maze[newLocation]->addPlayer(player);
 	}
 	
 	if (newLocation != playerLocation) {

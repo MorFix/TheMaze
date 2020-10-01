@@ -9,7 +9,6 @@ private:
 	int _numberOfPlayers;
 	Player** _players;
 	Player** createPlayers(int numberOfPlayers, bool isUserPlaying);
-	Maze createMaze();
 	void resetPlayersMoves();
 	bool playMove(Player* player, Location& playerLocation, Maze& maze);
 	std::vector<Location> placeTreasures(Maze& maze);
