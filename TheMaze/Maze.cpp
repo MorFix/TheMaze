@@ -1,6 +1,13 @@
 #include <stdio.h>
+#include <iomanip>
 #include <iostream>
 #include "Maze.h"
+
+#define NULL_ROOM "         "
+#define DOOR_VERTICAL "+++++++++"
+#define DOOR_HORIZONTAL "+"
+#define WALL_VERTICAL "---------"
+#define WALL_HORIZONTAL "|"
 
 using namespace std;
 
@@ -90,7 +97,7 @@ std::vector<Location> Maze::getConnectedEmptyExternalRooms(Location& originalRoo
 	return rooms;
 }
 
-vector<Location> Maze::getConnectedExternalRooms(int row, int col, vector<Location> recursiveStack)
+vector<Location> Maze::getConnectedExternalRooms(int row, int col, vector<Location>& recursiveStack)
 {
 	vector<Location> rooms;
 	Room* room = (*this)[row][col];
@@ -115,13 +122,13 @@ vector<Location> Maze::getConnectedExternalRooms(int row, int col, vector<Locati
 	addConnectedExternalRooms(row, col - 1, room->isLeftOpen(), rooms, recursiveStack);
 	addConnectedExternalRooms(row + 1, col, room->isBottomOpen(), rooms, recursiveStack);
 	addConnectedExternalRooms(row, col + 1, room->isRightOpen(), rooms, recursiveStack);
-
-	vector<Location>::iterator newEnd = std::remove(recursiveStack.begin(), recursiveStack.end(), location);
+	
+	recursiveStack.erase(std::remove(recursiveStack.begin(), recursiveStack.end(), location), recursiveStack.end());
 
 	return rooms;
 }
 
-void Maze::addConnectedExternalRooms(int row, int col, bool isPathOpen, vector<Location> rooms, vector<Location> recursiveStack)
+void Maze::addConnectedExternalRooms(int row, int col, bool isPathOpen, vector<Location>& rooms, vector<Location>& recursiveStack)
 {
 	if (!isPathOpen || !this->isLocationInMaze(row, col)) {
 		return;
@@ -239,18 +246,61 @@ Room*& Maze::operator[](const Location& location) const
 ostream& operator<<(ostream& out, const Maze& maze)
 {
 	for (int i = 0; i < maze._rows; i++) {
+		out << setw(0);
+		maze.outputTopBorder(out, maze[i]);
+		out << endl;
+
 		for (int j = 0; j < maze._cols; j++) {
-			if (maze[i][j] != NULL) {
-				Room* room = maze[i][j];
-
-				out << *room;
+			Room* roomPtr = maze[i][j];
+			
+			if (roomPtr == NULL) {
+				out << NULL_ROOM;
 			}
-
-			out << "\t";
+			else {
+				out << (roomPtr->isLeftOpen() ? DOOR_HORIZONTAL : WALL_HORIZONTAL)
+					<< *roomPtr
+					<< (roomPtr->isRightOpen() ? DOOR_HORIZONTAL : WALL_HORIZONTAL);
+			}
 		}
 
+		out << endl;
+		maze.outputBottomBorder(out, maze[i]);
 		out << endl;
 	}
 
 	return out;
+}
+
+void Maze::outputTopBorder(ostream& out, Room** row) const
+{
+	for (int i = 0; i < this->_cols; i++) {
+		Room* room = row[i];
+		
+		if (room == NULL) {
+			out << NULL_ROOM;
+		}
+		else if (!room->isTopOpen()) {
+			out << WALL_VERTICAL;
+		}
+		else {
+			out << DOOR_VERTICAL;
+		}
+	}
+}
+
+void Maze::outputBottomBorder(ostream& out, Room** row) const
+{
+	for (int i = 0; i < this->_cols; i++) {
+		Room* room = row[i];
+
+		if (room == NULL) {
+			out << NULL_ROOM;
+		}
+		else if (!room->isBottomOpen()) {
+			out << WALL_VERTICAL;
+		}
+		else {
+			out << DOOR_VERTICAL;
+		}
+	}
 }

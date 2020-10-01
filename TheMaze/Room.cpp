@@ -1,4 +1,5 @@
-#include <stdio.h>
+#include <iomanip>
+#include <iostream>
 #include "Room.h"
 
 Room::Room(bool isTopOpen, bool isLeftOpen, bool isBottomOpen, bool isRightOpen, int treasureValue)
@@ -63,27 +64,38 @@ void Room::addPlayer(Player* player)
 
 void Room::removePlayer(Player* player)
 {
-	std::vector<Player*>::iterator newEnd = std::remove(this->_players.begin(), this->_players.end(), player);
+	this->_players.erase(std::remove(this->_players.begin(), this->_players.end(), player), this->_players.end());
 
 	return;
 }
 
 std::ostream& operator<<(std::ostream& out, const Room& room)
 {
-	out << room.getTreasureValue();
+	int length = 0;
+	int treasure = room.getTreasureValue();
+
+	if (treasure > 0) {
+		out << " " << treasure;
+
+		// Adding the number of digits in the treasure value
+		for (; treasure != 0; treasure /= 10, length++);
+		length++;
+	}
 
 	size_t numberOfPlayers = room._players.size();
-	if (numberOfPlayers > 0) {
-		out << " - ";
-	}
+	
+	out << " ";
+	length++;
 
 	for (int i = 0; i < numberOfPlayers; i++) {
 		out << *room._players[i];
+		length += 2;
 
 		if (i < numberOfPlayers - 1) {
-			out << ".";
+			out << ",";
+			length++;
 		}
 	}
 
-	return out;
+	return out << std::setw((std::streamsize) 8 - length);
 }

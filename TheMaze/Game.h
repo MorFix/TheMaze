@@ -10,12 +10,14 @@ private:
 	Player** _players;
 	Player** createPlayers(int numberOfPlayers, bool isUserPlaying);
 	void resetPlayersMoves();
+	void playRound(int number, Maze& maze, bool printingAfterMove);
 	bool playMove(Player* player, Location& playerLocation, Maze& maze);
 	std::vector<Location> placeTreasures(Maze& maze);
 	void resetPlayers(Maze& maze, std::vector<Location> treasuresLocations);
 	void updatePlayersScore();
 public:
 	Game(int numberOfPlayers, bool isUserPlaying, int rounds);
-	void play();
+	void play(bool printingAfterMove = true);
+	void printScore();
 	~Game();
 };

@@ -18,8 +18,6 @@ Location StepMove::perform(Player* player, Location& playerLocation, Maze& maze)
 	
 	if (newLocation != playerLocation) {
 		this->increasePlayerMoves(player);
-
-		std::cout << maze << std::endl;
 	}
 	else {
 		std::cout << "This move is impossible. The turn is over" << std::endl;

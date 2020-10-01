@@ -4,7 +4,9 @@
 #include "CpuPlayer.h"
 #include "RandomMazeCreator.h"
 
-#define MAX_TREASURE_VALUE 10
+#define MAX_TREASURE_VALUE 99
+
+using namespace std;
 
 Game::Game(int numberOfPlayers, bool isUserPlaying, int rounds)
 {
@@ -13,39 +15,45 @@ Game::Game(int numberOfPlayers, bool isUserPlaying, int rounds)
 	this->_rounds = rounds;
 }
 
-void Game::play()
+void Game::play(bool printingAfterMove)
 {
 	for (int i = 0; i < this->_rounds; i++) {
 		Maze maze = RandomMazeCreator::create();
-		std::vector<Location> treasuresLocations = this->placeTreasures(maze);
-		std::cout << maze << std::endl;
+		vector<Location> treasuresLocations = this->placeTreasures(maze);	
 		
 		this->resetPlayers(maze, treasuresLocations);
-		std::cout << maze << std::endl;
-
-		bool isRoundOver = false;
-		while (!isRoundOver) {
-			for (int j = 0; !isRoundOver && j < this->_numberOfPlayers; j++) {
-				Player* currentPlayer = this->_players[j];
-				Location playerLocation = maze.findPlayer(currentPlayer);
-
-				// Is the player still in the game?
-				if (playerLocation != Location::NoLocation) {
-					std::cout << "Player " << currentPlayer->getNumber() << " is playing..." << std::endl;
-					isRoundOver = playMove(currentPlayer, playerLocation, maze);
-				}
-				else {
-					std::cout << "Player " << currentPlayer->getNumber() << " is out of the game" << std::endl;
-				}
-
-				std::cout << std::endl;
-			}
-		}
-
-		std::cout << "Round " << i + 1 << " is over!" << std::endl << std::endl;
-
-		this->updatePlayersScore();
+		this->playRound(i + 1, maze, printingAfterMove);
 	}
+}
+
+void Game::playRound(int number, Maze& maze, bool printingAfterMove) {
+	bool isRoundOver = false;
+	while (!isRoundOver) {
+		for (int j = 0; !isRoundOver && j < this->_numberOfPlayers; j++) {
+			Player* currentPlayer = this->_players[j];
+			Location playerLocation = maze.findPlayer(currentPlayer);
+
+			// Is the player still in the game?
+			if (playerLocation != Location::NoLocation) {
+				cout << "Player " << currentPlayer->getNumber() << " is playing..." << endl;
+				isRoundOver = this->playMove(currentPlayer, playerLocation, maze);
+
+				if (printingAfterMove) {
+					cout << maze << endl;
+				}
+			}
+			else {
+				cout << "Player " << currentPlayer->getNumber() << " is out of the game" << endl;
+			}
+
+			cout << endl;
+		}
+	}
+
+	cout << "Round " << number << " is over!" << endl << endl;
+	cout << maze << endl;
+
+	this->updatePlayersScore();
 }
 
 Player** Game::createPlayers(int numberOfPlayers, bool isUserPlaying) {
@@ -65,10 +73,10 @@ Player** Game::createPlayers(int numberOfPlayers, bool isUserPlaying) {
 	return players;
 }
 
-std::vector<Location> Game::placeTreasures(Maze& maze)
+vector<Location> Game::placeTreasures(Maze& maze)
 {
-	std::vector<Location> treasuresLocations;
-	std::vector<Location> externalRooms = maze.getExternalRooms();
+	vector<Location> treasuresLocations;
+	vector<Location> externalRooms = maze.getExternalRooms();
 
 	// Getting random number of treasures to place
 	int maxTreasureIndex = (rand() % (externalRooms.size() - this->_numberOfPlayers));
@@ -77,7 +85,7 @@ std::vector<Location> Game::placeTreasures(Maze& maze)
 		// Getting random room to place the treasure in
 		Location room = externalRooms[rand() % externalRooms.size()];
 
-		std::vector<Location>::iterator newEnd = std::remove(externalRooms.begin(), externalRooms.end(), room);
+		externalRooms.erase(remove(externalRooms.begin(), externalRooms.end(), room), externalRooms.end());
 		treasuresLocations.push_back(room);
 
 		// Adding 1 to make sure the treasure is not 0
@@ -87,7 +95,7 @@ std::vector<Location> Game::placeTreasures(Maze& maze)
 	return treasuresLocations;
 }
 
-void Game::resetPlayers(Maze& maze, std::vector<Location> treasuresLocations)
+void Game::resetPlayers(Maze& maze, vector<Location> treasuresLocations)
 {
 	this->resetPlayersMoves();
 
@@ -96,7 +104,7 @@ void Game::resetPlayers(Maze& maze, std::vector<Location> treasuresLocations)
 	for (int i = 0; i < this->_numberOfPlayers; i++) {
 		// Picking a path to a random treasure
 		Location randTreasureLocation = treasuresLocations[rand() % numberOfTreasures];
-		std::vector<Location> connectedRooms = maze.getConnectedEmptyExternalRooms(randTreasureLocation);
+		vector<Location> connectedRooms = maze.getConnectedEmptyExternalRooms(randTreasureLocation);
 		
 		// Making sure we choose a treasure that has a connected empty room
 		while (connectedRooms.size() == 0) {
@@ -122,9 +130,18 @@ bool Game::playMove(Player* player, Location& playerLocation, Maze& maze)
 	Location newLocation = move->perform(player, playerLocation, maze);
 	delete move;
 
-	// Is the new location inside the game?
+	// Is the new location outside the game?
 	if (newLocation == Location::NoLocation) {
-		return false;
+		// Was it the last player to leave the maze?
+		bool allPlayersOut = true;
+		for (int i = 0; i < this->_numberOfPlayers; i++) {
+			if (maze.findPlayer(this->_players[i]) != Location::NoLocation) {
+				allPlayersOut = false;
+				break;
+			}
+		}
+
+		return allPlayersOut;
 	}
 
 	int treasure = maze[newLocation]->getTreasureValue();
@@ -143,6 +160,15 @@ void Game::updatePlayersScore()
 		Player* currentPlayer = this->_players[i];
 
 		currentPlayer->setScore(currentPlayer->getScore() - currentPlayer->getNumberOfMoves());
+	}
+}
+
+void Game::printScore()
+{
+	cout << "Player Number\tScore" << endl;
+	for (int i = 0; i < this->_numberOfPlayers; i++) {
+		Player* player = this->_players[i];
+		cout << player->getNumber() << "\t\t" << player->getScore() << endl;
 	}
 }
 
